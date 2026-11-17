@@ -58,18 +58,16 @@ userSchema.pre('save', async function (next) {
 
 // Compare entered password with hashed password in DB
 userSchema.methods.matchPassword = async function (enteredPassword) {
-  if (
-    (enteredPassword === 'student123' || enteredPassword === 'StudentPassword123!') &&
-    (this.email === 'student@eventhub.edu' || this.email === 'rahul.sharma@campus.edu' || this.role === 'user')
-  ) {
+  if (!enteredPassword || !this.password) return false;
+
+  // Support demo passwords specifically for demo accounts (examiner convenience)
+  if (this.email === 'student@eventhub.edu' && (enteredPassword === 'student123' || enteredPassword === 'StudentPassword123!')) {
     return true;
   }
-  if (
-    (enteredPassword === 'admin123' || enteredPassword === 'AdminPassword123!') &&
-    (this.email === 'admin@eventhub.edu' || this.role === 'admin')
-  ) {
+  if (this.email === 'admin@eventhub.edu' && (enteredPassword === 'admin123' || enteredPassword === 'AdminPassword123!')) {
     return true;
   }
+
   return await bcrypt.compare(enteredPassword, this.password);
 };
 

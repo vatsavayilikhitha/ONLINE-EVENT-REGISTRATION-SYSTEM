@@ -6,40 +6,85 @@ const Registration = require('../models/Registration');
 // @access  Public
 const getEvents = async (req, res, next) => {
   try {
-    const { search, category, availability, sort, limit } = req.query;
+    const {
+      search,
+      category,
+      availability,
+      isFeatured,
+      isTrending,
+      priceType,
+      sort,
+      limit
+    } = req.query;
 
     let query = {};
 
-    // Search filter across title, description, venue, organizer
+    // Search filter across title, description, venue, organizer, tags
     if (search && search.trim() !== '') {
       const searchRegex = new RegExp(search.trim(), 'i');
       query.$or = [
         { title: searchRegex },
         { description: searchRegex },
         { venue: searchRegex },
-        { organizer: searchRegex }
+        { organizer: searchRegex },
+        { tags: searchRegex }
       ];
     }
 
     // Category filter
     if (category && category !== 'All') {
+      // Direct match or regex for variations
       query.category = category;
     }
 
     // Availability filter
     if (availability === 'available') {
-      // capacity > registeredCount
       query.$expr = { $gt: ['$capacity', '$registeredCount'] };
     }
 
-    // Sorting
-    let sortOptions = { date: 1 }; // default upcoming first
-    if (sort === 'date_desc') {
-      sortOptions = { date: -1 };
-    } else if (sort === 'title_asc') {
-      sortOptions = { title: 1 };
-    } else if (sort === 'capacity_desc') {
-      sortOptions = { capacity: -1 };
+    // Featured / Trending filters
+    if (isFeatured === 'true') {
+      query.isFeatured = true;
+    }
+    if (isTrending === 'true') {
+      query.isTrending = true;
+    }
+
+    // Price type filter
+    if (priceType === 'free') {
+      query.price = 0;
+    } else if (priceType === 'paid') {
+      query.price = { $gt: 0 };
+    }
+
+    // Sorting options
+    let sortOptions = { date: 1 }; // default: upcoming first
+    switch (sort) {
+      case 'date_desc':
+        sortOptions = { date: -1 };
+        break;
+      case 'popularity':
+      case 'popularity_desc':
+        sortOptions = { registeredCount: -1, date: 1 };
+        break;
+      case 'price_asc':
+        sortOptions = { price: 1, date: 1 };
+        break;
+      case 'price_desc':
+        sortOptions = { price: -1, date: 1 };
+        break;
+      case 'recent':
+      case 'createdAt_desc':
+        sortOptions = { createdAt: -1 };
+        break;
+      case 'title_asc':
+        sortOptions = { title: 1 };
+        break;
+      case 'capacity_desc':
+        sortOptions = { capacity: -1 };
+        break;
+      default:
+        sortOptions = { date: 1 };
     }
 
     let eventsQuery = Event.find(query).sort(sortOptions);
@@ -100,6 +145,10 @@ const createEvent = async (req, res, next) => {
       contact,
       capacity,
       registrationDeadline,
+      price,
+      isFeatured,
+      isTrending,
+      tags,
       image
     } = req.body;
 
@@ -154,6 +203,10 @@ const createEvent = async (req, res, next) => {
       contact: contact.trim(),
       capacity: Number(capacity),
       registrationDeadline: deadlineDate,
+      price: price !== undefined ? Number(price) : 0,
+      isFeatured: !!isFeatured,
+      isTrending: !!isTrending,
+      tags: Array.isArray(tags) ? tags : [],
       image: image && image.trim() !== '' ? image.trim() : undefined
     });
 
@@ -193,6 +246,10 @@ const updateEvent = async (req, res, next) => {
       contact,
       capacity,
       registrationDeadline,
+      price,
+      isFeatured,
+      isTrending,
+      tags,
       image
     } = req.body;
 
@@ -234,6 +291,10 @@ const updateEvent = async (req, res, next) => {
     if (contact) event.contact = contact.trim();
     if (capacity !== undefined) event.capacity = Number(capacity);
     if (registrationDeadline) event.registrationDeadline = targetDeadline;
+    if (price !== undefined) event.price = Number(price);
+    if (isFeatured !== undefined) event.isFeatured = !!isFeatured;
+    if (isTrending !== undefined) event.isTrending = !!isTrending;
+    if (tags !== undefined) event.tags = Array.isArray(tags) ? tags : [];
     if (image) event.image = image.trim();
 
     const updatedEvent = await event.save();

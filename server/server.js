@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const dotenv = require('dotenv');
+const path = require('path');
 const connectDB = require('./config/db');
 const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
@@ -38,14 +39,40 @@ app.use('/api/events', require('./routes/eventRoutes'));
 app.use('/api/registrations', require('./routes/registrationRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 
+// Serve frontend static assets in production
+if (process.env.NODE_ENV === 'production') {
+  const clientDist = path.join(__dirname, '../client/dist');
+  app.use(express.static(clientDist));
+  app.get('*', (req, res, next) => {
+    if (req.originalUrl.startsWith('/api')) {
+      return next();
+    }
+    res.sendFile(path.resolve(clientDist, 'index.html'));
+  });
+}
+
 // Error handling middleware
 app.use(notFound);
 app.use(errorHandler);
 
-const PORT = process.env.PORT || 5000;
+// On macOS, port 5000 is occupied by Apple AirPlay Receiver (AirTunes), causing EADDRINUSE or 403 Forbidden.
+// We use 5001 as default / fallback to ensure reliable cross-platform execution without overwriting user's .env.
+const PORT = process.env.PORT && process.env.PORT !== '5000' ? process.env.PORT : 5001;
 
 const server = app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    const fallbackPort = Number(PORT) + 1;
+    console.warn(`Port ${PORT} in use, attempting fallback to port ${fallbackPort}...`);
+    app.listen(fallbackPort, () => {
+      console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on fallback port ${fallbackPort}`);
+    });
+  } else {
+    console.error('Server error:', err);
+  }
 });
 
 // Handle unhandled promise rejections

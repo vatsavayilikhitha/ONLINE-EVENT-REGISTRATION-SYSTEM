@@ -15,8 +15,25 @@ const eventSchema = new mongoose.Schema(
     category: {
       type: String,
       required: [true, 'Please select an event category'],
-      enum: ['Workshops', 'Technical', 'Cultural', 'Sports', 'Seminars', 'Competitions', 'Other'],
-      default: 'Technical'
+      enum: [
+        'Technology and Hackathons',
+        'Workshops and Technical Sessions',
+        'Music and Entertainment',
+        'Cultural Festivals',
+        'Sports',
+        'Entrepreneurship and Business',
+        'Art and Photography',
+        'College Events',
+        'Conferences and Seminars',
+        // Backwards compatibility enums
+        'Workshops',
+        'Technical',
+        'Cultural',
+        'Seminars',
+        'Competitions',
+        'Other'
+      ],
+      default: 'Technology and Hackathons'
     },
     date: {
       type: Date,
@@ -61,6 +78,23 @@ const eventSchema = new mongoose.Schema(
       type: Date,
       required: [true, 'Please specify the registration deadline']
     },
+    price: {
+      type: Number,
+      default: 0,
+      min: [0, 'Price cannot be negative']
+    },
+    isFeatured: {
+      type: Boolean,
+      default: false
+    },
+    isTrending: {
+      type: Boolean,
+      default: false
+    },
+    tags: {
+      type: [String],
+      default: []
+    },
     image: {
       type: String,
       default: 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1000&auto=format&fit=crop&q=80'
@@ -85,5 +119,9 @@ eventSchema.virtual('isOpen').get(function () {
   const seatsLeft = this.capacity - (this.registeredCount || 0);
   return now <= deadline && seatsLeft > 0;
 });
+
+// Index for performant querying
+eventSchema.index({ date: 1, category: 1 });
+eventSchema.index({ isFeatured: 1, isTrending: 1 });
 
 module.exports = mongoose.model('Event', eventSchema);

@@ -32,7 +32,8 @@ const registerUser = async (req, res, next) => {
     }
 
     // Check if user already exists
-    const userExists = await User.findOne({ email: email.toLowerCase().trim() });
+    const cleanEmail = email.toLowerCase().trim();
+    const userExists = await User.findOne({ email: cleanEmail });
     if (userExists) {
       return res.status(400).json({
         success: false,
@@ -43,7 +44,7 @@ const registerUser = async (req, res, next) => {
     // Create user
     const user = await User.create({
       name: name.trim(),
-      email: email.toLowerCase().trim(),
+      email: cleanEmail,
       password,
       phone: phone.trim(),
       college: college.trim(),
@@ -80,7 +81,7 @@ const registerUser = async (req, res, next) => {
 // @access  Public
 const loginUser = async (req, res, next) => {
   try {
-    let { email, password } = req.body;
+    const { email, password } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -89,10 +90,7 @@ const loginUser = async (req, res, next) => {
       });
     }
 
-    let cleanEmail = email.toLowerCase().trim();
-    if (cleanEmail === 'student') cleanEmail = 'student@eventhub.edu';
-    if (cleanEmail === 'admin') cleanEmail = 'admin@eventhub.edu';
-    if (cleanEmail === 'rahul') cleanEmail = 'rahul.sharma@campus.edu';
+    const cleanEmail = email.toLowerCase().trim();
 
     // Check for user
     const user = await User.findOne({ email: cleanEmail });
@@ -112,15 +110,9 @@ const loginUser = async (req, res, next) => {
         }
       });
     } else {
-      if (!user) {
-        return res.status(401).json({
-          success: false,
-          message: 'No account found with this email. (Tip: Use 1-Click Demo buttons or Register)'
-        });
-      }
       return res.status(401).json({
         success: false,
-        message: 'Incorrect password. (Tip: Demo password is "student123" or "admin123")'
+        message: 'Invalid email or password'
       });
     }
   } catch (error) {

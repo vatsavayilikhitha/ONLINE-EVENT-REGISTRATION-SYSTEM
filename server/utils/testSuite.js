@@ -1,4 +1,4 @@
-const API_BASE = 'http://127.0.0.1:5000/api';
+const API_BASE = process.env.API_BASE || 'http://127.0.0.1:5001/api';
 
 const results = [];
 
@@ -178,7 +178,7 @@ async function runTestSuite() {
       {
         title: 'Full-Stack Software Engineering Summit',
         description: 'Automated test suite demo event for full stack architecture and testing.',
-        category: 'Technical',
+        category: 'Technology and Hackathons',
         date: eventDate.toISOString(),
         startTime: '10:00 AM',
         endTime: '03:00 PM',
@@ -187,6 +187,8 @@ async function runTestSuite() {
         contact: 'summit@college.edu',
         capacity: 50,
         registrationDeadline: deadline.toISOString(),
+        price: 0,
+        isFeatured: true,
         image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800'
       },
       adminToken
@@ -231,10 +233,10 @@ async function runTestSuite() {
 
   // 10. Event Filtering by Category
   try {
-    const res = await getJson('/events?category=Workshops');
-    const allWorkshops = res.data.events?.every((e) => e.category === 'Workshops');
-    if (res.ok && allWorkshops && res.data.count > 0) {
-      logTest(10, 'Event Category Filtering', 'PASSED', `Filtered ${res.data.count} workshops`);
+    const res = await getJson('/events?category=Technology and Hackathons');
+    const allMatching = res.data.events?.every((e) => e.category === 'Technology and Hackathons');
+    if (res.ok && allMatching && res.data.count > 0) {
+      logTest(10, 'Event Category Filtering', 'PASSED', `Filtered ${res.data.count} events`);
     } else {
       logTest(10, 'Event Category Filtering', 'FAILED', 'Filter returned wrong categories');
     }
