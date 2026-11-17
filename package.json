@@ -1,0 +1,11 @@
+{
+  "name": "online-event-registration-system",
+  "version": "1.0.0",
+  "description": "Online College Event Registration System (Full Stack)",
+  "scripts": {
+    "server": "cd server && node server.js",
+    "client": "cd client && npm run dev",
+    "seed": "cd server && npm run seed",
+    "test:api": "cd server && node utils/testSuite.js"
+  }
+}

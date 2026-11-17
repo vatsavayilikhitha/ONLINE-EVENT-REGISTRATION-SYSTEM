@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    background-color: #F8F7F3;
+    color: #171717;
+    font-family: 'Manrope', 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    color: inherit;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  html.dark body {
+    background-color: #121212;
+    color: #F8F7F3;
+  }
+}
+
+/* Dark Mode Fallback and Consistency Classes */
+html.dark .dark\:bg-dark-card {
+  background-color: #1E1E1E !important;
+}
+html.dark .dark\:border-dark-border {
+  border-color: #2E2E2E !important;
+}
+html.dark .dark\:text-dark-text {
+  color: #F8F7F3 !important;
+}
+html.dark .dark\:text-dark-muted {
+  color: #A8A29E !important;
+}
+html.dark .dark\:bg-dark-bg {
+  background-color: #121212 !important;
+}
+html.dark .dark\:bg-dark-surface {
+  background-color: #1C1C1C !important;
+}
+
+/* Browser autofill style matching warm / dark theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #171717 !important;
+  box-shadow: 0 0 0px 1000px #ffffff inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+html.dark input:-webkit-autofill,
+html.dark input:-webkit-autofill:hover, 
+html.dark input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #F8F7F3 !important;
+  box-shadow: 0 0 0px 1000px #1C1C1C inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F3F1EC;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: #181818;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D4D0C5;
+  border-radius: 4px;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: #333333;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #B5B0A2;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #444444;
+}
+
+/* Print styles for Registration Ticket / Confirmation */
+@media print {
+  nav, footer, .no-print {
+    display: none !important;
+  }
+  body {
+    background: #ffffff !important;
+    color: #171717 !important;
+  }
+  .print-card {
+    box-shadow: none !important;
+    border: 1px solid #E5E2DB !important;
+  }
+}
