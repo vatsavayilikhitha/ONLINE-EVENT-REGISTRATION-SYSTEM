@@ -12,12 +12,8 @@ import {
   Plus,
   Edit2,
   Trash2,
-  Calendar,
-  MapPin,
-  Users,
   Eye,
-  AlertTriangle,
-  ArrowUpDown
+  AlertTriangle
 } from 'lucide-react';
 import { formatDate } from '../utils/formatDate';
 

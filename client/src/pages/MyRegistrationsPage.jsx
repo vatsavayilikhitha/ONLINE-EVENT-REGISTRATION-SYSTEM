@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { registrationService } from '../services/registrationService';
 import RegistrationCard from '../components/registrations/RegistrationCard';
@@ -15,7 +15,7 @@ const MyRegistrationsPage = () => {
   const [statusFilter, setStatusFilter] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const fetchRegistrations = async () => {
+  const fetchRegistrations = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -28,13 +28,16 @@ const MyRegistrationsPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchRegistrations();
-  }, []);
+  }, [fetchRegistrations]);
 
   const handleCancelRegistration = async (id) => {
+    if (!window.confirm('Are you sure you want to cancel this event ticket? Your seat will be released for other students.')) {
+      return;
+    }
     setCancellingId(id);
     try {
       await registrationService.cancelRegistration(id);
@@ -62,17 +65,17 @@ const MyRegistrationsPage = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-extrabold text-charcoal dark:text-[#F8F7F3] tracking-tight">
+          <h1 className="text-3xl font-extrabold text-[#171717] dark:text-[#F8F7F3] tracking-tight">
             My Event Registrations
           </h1>
-          <p className="text-sm text-warm-gray dark:text-[#A8A29E] mt-1">
-            Review your booked tickets, check event venues, and print entry passes.
+          <p className="text-sm text-[#6B6B67] dark:text-[#A8A29E] mt-1">
+            Review your booked tickets, check event venues, and print official entry passes.
           </p>
         </div>
 
         <Link
           to="/events"
-          className="inline-flex items-center text-xs font-bold px-4 py-2.5 bg-[#D95D45] hover:bg-[#B94734] text-white rounded-xl transition-colors shadow-xs"
+          className="inline-flex items-center text-xs font-bold px-4 py-2.5 bg-[#D95D45] hover:bg-[#B94734] text-white rounded-xl transition-colors shadow-2xs cursor-pointer"
         >
           <Calendar className="w-3.5 h-3.5 mr-1.5" />
           Register For More Events
@@ -105,7 +108,7 @@ const MyRegistrationsPage = () => {
           <Search className="w-4 h-4 absolute left-3 top-2.5 text-[#6B6B67] dark:text-[#A8A29E]" />
           <input
             type="text"
-            placeholder="Search by event or ID..."
+            placeholder="Search by event or Ticket ID..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-9 pr-3 py-2 text-xs bg-white dark:bg-[#1C1C1C] text-[#171717] dark:text-[#F8F7F3] border border-[#E5E2DB] dark:border-[#2E2E2E] rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D95D45]/20 focus:border-[#D95D45] placeholder-[#6B6B67]/50 dark:placeholder-[#A8A29E]/50"

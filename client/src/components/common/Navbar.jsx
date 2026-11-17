@@ -19,7 +19,7 @@ import Button from './Button';
 
 const Navbar = () => {
   const { user, isAuthenticated, isAdmin, logout } = useAuth();
-  const { theme, toggleTheme, isDark } = useTheme();
+  const { toggleTheme, isDark } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 

@@ -7,7 +7,7 @@ import Badge from '../components/common/Badge';
 import Button from '../components/common/Button';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
-import { Users, Ticket, Filter, ExternalLink, Printer } from 'lucide-react';
+import { Users, Printer } from 'lucide-react';
 import { formatDate } from '../utils/formatDate';
 
 const AdminParticipantsPage = () => {
@@ -69,18 +69,6 @@ const AdminParticipantsPage = () => {
     }
   };
 
-  const getStatusBadgeVariant = (st) => {
-    switch (st) {
-      case 'Confirmed':
-        return 'success';
-      case 'Cancelled':
-        return 'danger';
-      case 'Completed':
-        return 'indigo';
-      default:
-        return 'default';
-    }
-  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">

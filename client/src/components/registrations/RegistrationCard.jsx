@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Calendar, MapPin, Ticket, Ban, Printer, ExternalLink, AlertTriangle } from 'lucide-react';
+import { Calendar, MapPin, Ban, Printer, AlertTriangle } from 'lucide-react';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
 import Modal from '../common/Modal';
@@ -13,8 +13,7 @@ const RegistrationCard = ({ registration, onCancel, isCancelling }) => {
     _id,
     registrationId,
     event,
-    status,
-    registeredAt
+    status
   } = registration;
 
   if (!event) return null;

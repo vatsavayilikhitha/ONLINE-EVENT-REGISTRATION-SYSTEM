@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
-import { Calendar, MapPin, User, Mail, Phone, Building2, CheckCircle2 } from 'lucide-react';
+import { Calendar, MapPin, CheckCircle2 } from 'lucide-react';
 import { formatDate } from '../../utils/formatDate';
 
 const ConfirmationModal = ({

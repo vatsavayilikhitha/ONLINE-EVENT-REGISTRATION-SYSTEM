@@ -4,8 +4,6 @@ import { adminService } from '../services/adminService';
 import StatCard from '../components/dashboard/StatCard';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorMessage from '../components/common/ErrorMessage';
-import Badge from '../components/common/Badge';
-import Button from '../components/common/Button';
 import {
   Calendar,
   CalendarCheck,
@@ -15,8 +13,7 @@ import {
   Layers,
   ArrowRight,
   Shield,
-  Clock,
-  Settings
+  Clock
 } from 'lucide-react';
 import { formatDate } from '../utils/formatDate';
 
